@@ -105,7 +105,12 @@ let weatherSystem = {
     windX: 0,
     windY: 0,
     windStrength: 0,
-    visibility: 1.0
+    windAngle: 0,
+    windTarget: 0,
+    visibility: 1.0,
+    raindrops: [],
+    currents: [],
+    lightning: 0
 };
 
 // Input state
