@@ -80,6 +80,7 @@ const tugboat = {
 };
 
 // Global flags
+let __fatalError = false;
 let gameStarted = false;
 let gameWon = false;
 let gameLost = false;

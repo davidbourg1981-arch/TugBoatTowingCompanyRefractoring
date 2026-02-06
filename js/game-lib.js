@@ -359,7 +359,7 @@ function updateOptionsUI() {
 // defaultKeybinds moved to constants.js
 
 // currentKeybinds moved to state.js
-let remapTarget = null;
+// remapTarget moved to state.js
 
 function openRemapPanel() {
   if (window.Game && Game.ui && Game.ui.isModalOpen && Game.ui.isModalOpen()) return;
