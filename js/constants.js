@@ -66,6 +66,28 @@ const ASPECT_RATIOS = [
 // World dimensions
 const WORLD = { width: 8000, height: 4000 };
 
+// Tide system
+const TIDE = {
+    phase: 0,
+    cycleLength: 600, // 10 minutes for a full tide cycle
+
+    update(deltaSec) {
+        this.phase = (this.phase + deltaSec / this.cycleLength) % 1;
+    },
+
+    isHighTide() {
+        // High tide when phase is between 0.25 and 0.75
+        return this.phase >= 0.25 && this.phase < 0.75;
+    },
+
+    getCurrentMultiplier() {
+        // Returns 0.8 to 1.2 based on tide
+        // High tide = faster currents, low tide = slower
+        const tideFactor = Math.sin(this.phase * Math.PI * 2);
+        return 1 + tideFactor * 0.2;
+    }
+};
+
 // Zone types for collision
 const ZONE = {
     WATER: 0,      // Safe navigation (ocean, river)
