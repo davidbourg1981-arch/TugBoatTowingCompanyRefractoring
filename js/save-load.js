@@ -114,6 +114,18 @@ function resetProgress() {
 // Internal helper for usage in game-render.js
 function _saveKey(slot) { return SAVE_PREFIX + slot; }
 
+// Get profile name for a slot
+function getProfileName(slot) {
+    try {
+        const json = localStorage.getItem(SAVE_PREFIX + slot);
+        if (json) {
+            const data = JSON.parse(json);
+            if (data.profileName) return data.profileName;
+        }
+    } catch (e) { }
+    return `Profile ${slot}`;
+}
+
 // Wrap important progression functions to autosave after changes.
 function _wrapAutosave(fnName, reason) {
     try {
