@@ -688,9 +688,6 @@ function selectBoat(index) {
 // Audio init moved to audio.js
 
 // Engine and Sound functions moved to audio.js
-// Code cleanup complete
-// Audio code cleanup complete
-
 // Polyfill moved to utils.js
 // WORLD moved to constants.js
 
