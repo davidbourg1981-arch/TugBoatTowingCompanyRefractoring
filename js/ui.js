@@ -421,6 +421,55 @@ function updateRegionUI() {
     document.getElementById('currentRegion').innerHTML = `${tier.icon} ${tier.name}`;
 }
 
+// License Helpers (global scope)
+function hasLicense(id) {
+    if (typeof licenses === 'undefined') return false;
+    return licenses.owned && licenses.owned.includes(id);
+}
+
+function canBuyLicense(id) {
+    if (typeof LICENSES === 'undefined') return false;
+    const lic = LICENSES[id];
+    if (!lic) return false;
+    if (hasLicense(id)) return false;
+    if (game.money < lic.cost) return false;
+
+    const progress = getRequirementProgress(id);
+    return progress.met;
+}
+
+function getRequirementProgress(id) {
+    if (typeof LICENSES === 'undefined') return { met: false, current: 0, required: 0 };
+    const lic = LICENSES[id];
+    if (!lic) return { met: false, current: 0, required: 0 };
+
+    const req = lic.requirement;
+    let current = 0;
+    let required = req.value;
+
+    switch (req.type) {
+        case 'deliveries': current = career.totalDeliveries; break;
+        case 'rushJobs': current = licenses.rushJobs || 0; break;
+        case 'fragileJobs': current = licenses.fragileJobs || 0; break;
+        case 'rescueJobs': current = licenses.rescueJobs || 0; break;
+        case 'salvageJobs': current = licenses.salvageJobs || 0; break;
+        case 'earnings': current = career.totalEarnings; break;
+    }
+
+    return { met: current >= required, current, required };
+}
+
+function buyLicense(id) {
+    if (!canBuyLicense(id)) return;
+    const lic = LICENSES[id];
+    game.money -= lic.cost;
+    if (!licenses.owned) licenses.owned = [];
+    licenses.owned.push(id);
+    if (typeof playSound === 'function') playSound('success');
+    if (typeof updateLicenseUI === 'function') updateLicenseUI();
+    if (typeof updateUI === 'function') updateUI();
+}
+
 function openLicenses() {
     if (!window.Game || !Game.ui || !Game.ui.lockModal) { game.paused = true; }
     if (window.Game && Game.ui && Game.ui.lockModal && !Game.ui.lockModal('licenses')) return;
