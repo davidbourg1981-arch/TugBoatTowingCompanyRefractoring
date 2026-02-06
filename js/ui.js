@@ -89,6 +89,61 @@ function updateJobUI() {
 }
 
 
+// Job Board UI - populates job choices
+function updateJobBoardUI() {
+    const list = document.getElementById('jobBoardList');
+    if (!list) return;
+    list.innerHTML = '';
+
+    if (!availableJobs || availableJobs.length === 0) {
+        list.innerHTML = '<div class="job-option" style="text-align: center; opacity: 0.7;">No jobs available</div>';
+        return;
+    }
+
+    availableJobs.forEach((job, index) => {
+        const jt = job.jobType;
+        const div = document.createElement('div');
+        div.className = 'job-option ' + jt.class;
+        div.setAttribute('tabindex', '0');
+        div.setAttribute('data-gp-focusable', 'true');
+
+        // Pickup location text
+        const pickupText = jt === JOB_TYPES.SALVAGE
+            ? '<span class="icon icon-search"></span> Open Water'
+            : `<span class="icon icon-pickup"></span> ${job.pickup ? job.pickup.name : 'Unknown'}`;
+
+        // Build special requirement text
+        let specialText = '';
+        if (jt === JOB_TYPES.FRAGILE) specialText = '<span class="job-special fragile"><span class="icon icon-fragile"></span> No collisions!</span>';
+        if (jt === JOB_TYPES.RESCUE) specialText = '<span class="job-special rescue"><span class="icon icon-rescue"></span> Sinking!</span>';
+        if (jt === JOB_TYPES.SALVAGE) specialText = '<span class="job-special salvage"><span class="icon icon-search"></span> Find cargo</span>';
+        if (jt === JOB_TYPES.VIP) specialText = '<span class="job-special vip"><span class="icon icon-vip"></span> Keep moving!</span>';
+        if (jt === JOB_TYPES.TANDEM && job.tandemCount) specialText = `<span class="job-special tandem"><span class="icon icon-tandem"></span> ${job.tandemCount} barges</span>`;
+
+        // Timer text
+        let timerText = '';
+        if (job.timeLimit) {
+            timerText = `<span class="job-timer"><span class="icon icon-rush"></span> ${Math.ceil(job.timeLimit)}s</span>`;
+        }
+
+        div.innerHTML = `
+            <div class="job-header">
+                <span class="job-type" style="color: ${jt.color}">${jt.icon} ${jt.name}</span>
+                <span class="job-pay"><span class="icon icon-money"></span> $${job.pay}</span>
+            </div>
+            <div class="job-cargo"><span class="icon icon-box"></span> ${job.cargoType.name}</div>
+            <div class="job-route">
+                ${pickupText}<br>
+                <span class="icon icon-dock"></span> ${job.delivery ? job.delivery.name : 'Harbor'}
+            </div>
+            <div class="job-extras">${specialText}${timerText}</div>
+        `;
+
+        div.onclick = () => selectJob(index);
+        list.appendChild(div);
+    });
+}
+
 // Interaction Helpers (Fuel/Repair)
 function getNearbyFuelDock() {
     for (const dock of docks) {
