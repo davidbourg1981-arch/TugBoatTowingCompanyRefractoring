@@ -5,6 +5,13 @@
 
 const SAVE_PREFIX = 'tugboat_save_';
 
+// Save system configuration (used by game-render.js for profiles)
+const SAVE_SYS = {
+    version: 2,           // Save data format version
+    slots: 4,             // Number of save slots available
+    activeKey: 'tugboat_active_slot'  // localStorage key for active slot
+};
+
 function saveToSlot(slotIndex = 0) {
     const saveObj = {
         version: 1,
