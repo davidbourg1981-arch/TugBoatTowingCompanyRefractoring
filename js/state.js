@@ -95,6 +95,7 @@ let cargos = [];
 let currentJob = null;
 // availableJobs is defined in jobs.js
 let activeCompetitors = []; // Renamed from competitors to avoid conflicts
+let competitors = activeCompetitors; // Alias for game code compatibility
 let competitorJobs = [];
 let waterParticles = [];
 let ripples = [];
