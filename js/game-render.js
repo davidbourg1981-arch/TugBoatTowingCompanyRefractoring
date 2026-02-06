@@ -2334,6 +2334,17 @@ function gameLoop(currentTime) {
 
 // Save logic moved to js/save-load.js
 
+// Autosave trigger function
+function triggerAutosave(reason) {
+  try {
+    if (typeof saveToSlot === 'function' && typeof activeSaveSlot !== 'undefined') {
+      saveToSlot(activeSaveSlot, true); // silent = true
+    }
+  } catch (e) {
+    console.warn('Autosave failed:', reason, e);
+  }
+}
+
 // install wrappers after everything is defined
 setTimeout(() => {
   _wrapAutosave('completeJob', 'jobComplete');

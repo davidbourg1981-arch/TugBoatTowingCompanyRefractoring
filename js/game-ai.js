@@ -411,77 +411,11 @@ function getAIRiverWaypoint(comp, targetX, targetY) {
   return null;
 }
 
-// === MISSING HELPER FUNCTIONS ===
-
-function __nearestRiverCenterPoint(x, y) {
-  let best = null;
-  let minD2 = Infinity;
-
-  for (const key in RIVERS) {
-    const river = RIVERS[key];
-    for (const p of river.path) {
-      const d2 = (x - p.x) ** 2 + (y - p.y) ** 2;
-      if (d2 < minD2) {
-        minD2 = d2;
-        best = { x: p.x, y: p.y, d2, river };
-      }
-    }
-  }
-  return best;
-}
-
-function __findNearestWaterPoint(targetX, targetY, searchRadius, step) {
-  // Spiral search outwards
-  let angle = 0;
-  let r = 10;
-  while (r < searchRadius) {
-    const tx = targetX + Math.cos(angle) * r;
-    const ty = targetY + Math.sin(angle) * r;
-    if (isInWater(tx, ty)) return { x: tx, y: ty };
-
-    angle += 1;
-    r += step * 0.1;
-  }
-  return { x: targetX, y: targetY }; // Failed
-}
-
-function distToSegment(px, py, x1, y1, x2, y2) {
-  const l2 = (x1 - x2) ** 2 + (y1 - y2) ** 2;
-  if (l2 === 0) return Math.hypot(px - x1, py - y1);
-
-  let t = ((px - x1) * (x2 - x1) + (py - y1) * (y2 - y1)) / l2;
-  t = Math.max(0, Math.min(1, t));
-
-  return Math.hypot(px - (x1 + t * (x2 - x1)), py - (y1 + t * (y2 - y1)));
-}
-
-function __clampToWater(comp, pushStrength) {
-  if (getZoneAt(comp.x, comp.y) !== ZONE.LAND) return;
-
-  // We are on land. Find nearest water.
-  const best = __nearestRiverCenterPoint(comp.x, comp.y);
-  let targetX = WORLD.width / 2;
-  let targetY = WORLD.height / 2;
-
-  if (best && best.d2 < 600 * 600) {
-    targetX = best.x;
-    targetY = best.y;
-  } else {
-    // Fallback to ocean/harbor center line
-    targetY = WORLD.height / 2;
-    if (comp.x < HARBOR.width) targetX = HARBOR.width / 2;
-    else targetX = OCEAN.x + 200;
-  }
-
-  const dx = targetX - comp.x;
-  const dy = targetY - comp.y;
-  const dist = Math.hypot(dx, dy);
-
-  if (dist > 0) {
-    comp.vx += (dx / dist) * pushStrength;
-    comp.vy += (dy / dist) * pushStrength;
-  }
-}
+// === HELPER FUNCTIONS ===
+// __nearestRiverCenterPoint is defined in world.js
+// __findNearestWaterPoint is defined in world.js
+// distToSegment is defined in utils.js
+// __clampToWater is defined in world.js
 
 function updateCompetitorCargo(comp, delta = 1) {
   const cargo = comp.attached;

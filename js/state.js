@@ -87,10 +87,13 @@ let gameLost = false;
 let currentDifficulty = DIFFICULTY.normal; // Depends on constants.js
 let activeSaveSlot = 0;
 
+// Difficulty key (for save/load)
+let _selectedDifficultyKey = 'normal';
+
 // Collections
 let cargos = [];
 let currentJob = null;
-let availableJobs = [];
+// availableJobs is defined in jobs.js
 let activeCompetitors = []; // Renamed from competitors to avoid conflicts
 let competitorJobs = [];
 let waterParticles = [];
