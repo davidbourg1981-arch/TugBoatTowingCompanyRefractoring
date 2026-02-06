@@ -120,10 +120,10 @@ function initGame(isLoaded = false) {
 
     // AI
     if (typeof createCompetitor === 'function') {
-        competitors = [];
+        activeCompetitors = [];
         const region = getCurrentTier ? getCurrentTier() : { aiCount: 2 };
         for (let i = 0; i < region.aiCount; i++) {
-            competitors.push(createCompetitor(i));
+            activeCompetitors.push(createCompetitor(i));
         }
     }
 

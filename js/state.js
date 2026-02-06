@@ -91,10 +91,18 @@ let activeSaveSlot = 0;
 let cargos = [];
 let currentJob = null;
 let availableJobs = [];
-let competitors = [];
+let activeCompetitors = []; // Renamed from competitors to avoid conflicts
 let competitorJobs = [];
 let waterParticles = [];
 let ripples = [];
+let weather = {
+    current: 'CLEAR',
+    timeRemaining: 999,
+    windX: 0,
+    windY: 0,
+    windStrength: 0,
+    visibility: 1.0
+};
 
 // Input state
 const keys = {};

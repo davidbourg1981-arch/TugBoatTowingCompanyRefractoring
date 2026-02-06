@@ -27,7 +27,7 @@ TABLE OF CONTENTS (JS)
 06) Weather & region features
 07) UI (panels, HUD, messages, leaderboard, store)
 08) Jobs (spawning, timers, completion/fail)
-09) AI competitors (spawn, update, anti-stuck)
+09) AI activeCompetitors (spawn, update, anti-stuck)
 10) Player physics & towing
 11) Camera & rendering (drawWorld, minimap)
 12) Input (keyboard/gamepad/touch)
@@ -113,7 +113,7 @@ function startGameWithDifficulty(diff) {
   currentJob = null;
   availableJobs = [];
   cargos = [];
-  competitors = [];
+  activeCompetitors = [];
   competitorJobs = [];
   waterParticles = [];
   ripples = [];
@@ -121,7 +121,7 @@ function startGameWithDifficulty(diff) {
   // Spawn AI and jobs
   const region = getCurrentRegion();
   for (let i = 0; i < region.aiCount; i++) {
-    competitors.push(createCompetitor(i));
+    activeCompetitors.push(createCompetitor(i));
   }
   spawnNewJob();
 
@@ -450,7 +450,7 @@ function quitToMenu() {
   licenses.rescueJobs = 0;
   licenses.salvageJobs = 0;
   waterParticles = []; ripples = [];
-  competitors = []; competitorJobs = [];
+  activeCompetitors = []; competitorJobs = [];
   lastPlayerRank = 1; lastLeaderName = 'You'; eventCooldown = 0;
   chainCount = 0; lastDeliveryTime = 0;
   cargos = []; currentJob = null; availableJobs = [];
@@ -1404,14 +1404,14 @@ function selectRegion(index) {
   if (!career.unlockedRegions[index]) return;
   career.currentRegion = index;
 
-  // Reset competitors for new region
-  competitors = [];
+  // Reset activeCompetitors for new region
+  activeCompetitors = [];
   competitorJobs = [];
 
   // Spawn appropriate number of AI for this region
   const region = getCurrentRegion();
   for (let i = 0; i < region.aiCount; i++) {
-    competitors.push(createCompetitor(i));
+    activeCompetitors.push(createCompetitor(i));
   }
 
   playSound('attach');
@@ -1823,7 +1823,7 @@ const COMPETITOR_COLORS = [
   { name: 'Purple Pirate', color1: '#8e44ad', color2: '#7d3c98', color3: '#6c3483' }
 ];
 
-let competitors = [];
+let activeCompetitors = [];
 let competitorJobs = [];
 
 // Calculate AI difficulty scaling based on player tier
@@ -1902,11 +1902,11 @@ function createCompetitor(index) {
   };
 }
 
-// Update existing competitors when player tier changes
+// Update existing activeCompetitors when player tier changes
 function updateCompetitorDifficulty() {
   const difficulty = getAIDifficultyLevel();
 
-  for (const comp of competitors) {
+  for (const comp of activeCompetitors) {
     // Gradually improve AI if player has progressed
     if (difficulty > comp.skillLevel + 0.1) {
       const boost = (difficulty - comp.skillLevel) * 0.3;
@@ -1919,11 +1919,11 @@ function updateCompetitorDifficulty() {
 }
 
 function initCompetitors() {
-  competitors = [];
+  activeCompetitors = [];
   competitorJobs = [];
   const numCompetitors = Math.min(3, Math.floor(game.jobsDone / 5) + 1);
   for (let i = 0; i < numCompetitors; i++) {
-    competitors.push(createCompetitor(i));
+    activeCompetitors.push(createCompetitor(i));
   }
 }
 
@@ -1993,11 +1993,11 @@ function spawnCompetitorJob(competitor) {
   };
 }
 
-// Update existing competitors when player tier changes
+// Update existing activeCompetitors when player tier changes
 function updateCompetitorDifficulty() {
   const difficulty = getAIDifficultyLevel();
 
-  for (const comp of competitors) {
+  for (const comp of activeCompetitors) {
     // Gradually improve AI if player has progressed
     if (difficulty > comp.skillLevel + 0.1) {
       const boost = (difficulty - comp.skillLevel) * 0.3;
@@ -2010,11 +2010,11 @@ function updateCompetitorDifficulty() {
 }
 
 function initCompetitors() {
-  competitors = [];
+  activeCompetitors = [];
   competitorJobs = [];
   const numCompetitors = Math.min(3, Math.floor(game.jobsDone / 5) + 1);
   for (let i = 0; i < numCompetitors; i++) {
-    competitors.push(createCompetitor(i));
+    activeCompetitors.push(createCompetitor(i));
   }
 }
 
@@ -2382,7 +2382,7 @@ function updateDebugHud(deltaMs, deltaNorm) {
   // Best-effort counts (these names exist in your code)
   const jobCount = (typeof availableJobs !== 'undefined' && availableJobs && availableJobs.length != null) ? availableJobs.length : 0;
   const hasCurrentJob = (typeof currentJob !== 'undefined' && currentJob) ? 1 : 0;
-  const aiCount = (typeof competitors !== 'undefined' && competitors && competitors.length != null) ? competitors.length : 0;
+  const aiCount = (typeof activeCompetitors !== 'undefined' && activeCompetitors && activeCompetitors.length != null) ? activeCompetitors.length : 0;
   const particleCount = (typeof waterParticles !== 'undefined' && waterParticles && waterParticles.length != null) ? waterParticles.length : 0;
   const rippleCount = (typeof ripples !== 'undefined' && ripples && ripples.length != null) ? ripples.length : 0;
 
@@ -2499,10 +2499,10 @@ function init() {
     }
   }, { once: false });
 
-  // Initialize first region's competitors
+  // Initialize first region's activeCompetitors
   const startRegion = getCurrentRegion();
   for (let i = 0; i < startRegion.aiCount; i++) {
-    competitors.push(createCompetitor(i));
+    activeCompetitors.push(createCompetitor(i));
   }
 
   // Initialize weather system
@@ -2524,7 +2524,7 @@ function restartGame() {
   tugboat.attached = null; tugboat.fuel = tugboat.maxFuel;
   tugboat.health = tugboat.maxHealth;
   waterParticles = []; ripples = [];
-  competitors = []; competitorJobs = [];
+  activeCompetitors = []; competitorJobs = [];
   lastPlayerRank = 1; lastLeaderName = 'You'; eventCooldown = 0;
   initCurrents();
   changeWeather();
@@ -3430,7 +3430,7 @@ function updateUI() {
 function toggleLeaderboard() {
   leaderboardVisible = !leaderboardVisible;
   const lb = document.getElementById('leaderboard');
-  if (leaderboardVisible && competitors.length > 0) {
+  if (leaderboardVisible && activeCompetitors.length > 0) {
     lb.classList.add('show');
     updateLeaderboard();
   } else {
@@ -3462,7 +3462,7 @@ function getLeaderboardData() {
     { name: 'You', deliveries: game.jobsDone, isPlayer: true, color: '#ff5722' }
   ];
 
-  for (const comp of competitors) {
+  for (const comp of activeCompetitors) {
     entries.push({
       name: comp.name,
       deliveries: comp.deliveries,
@@ -3543,9 +3543,9 @@ function updateLeaderboard() {
 
   container.innerHTML = html;
 
-  // Only show if toggled on and has competitors
+  // Only show if toggled on and has activeCompetitors
   const lb = document.getElementById('leaderboard');
-  if (leaderboardVisible && competitors.length > 0) {
+  if (leaderboardVisible && activeCompetitors.length > 0) {
     lb.classList.add('show');
   } else {
     lb.classList.remove('show');
@@ -3577,7 +3577,7 @@ function showTaunt(competitorName) {
   const taunt = TAUNTS[Math.floor(Math.random() * TAUNTS.length)];
 
   // Find the competitor
-  const comp = competitors.find(c => c.name === competitorName);
+  const comp = activeCompetitors.find(c => c.name === competitorName);
   if (!comp) return;
 
   // Position bubble above competitor (convert world to screen coords)
@@ -3640,8 +3640,8 @@ function checkMilestones() {
 
   // Special achievements
   // First win against AI
-  if (game.jobsDone === 1 && competitors.length > 0) {
-    const leadingComp = competitors.find(c => c.deliveries > 0);
+  if (game.jobsDone === 1 && activeCompetitors.length > 0) {
+    const leadingComp = activeCompetitors.find(c => c.deliveries > 0);
     if (!leadingComp) {
       showEvent('comeback', '<span class="icon icon-first"></span> First Blood!', 'First delivery before the AI!');
       eventCooldown = 300;
@@ -3652,7 +3652,7 @@ function checkMilestones() {
   // Comeback - was behind, now leading
   const entries = getLeaderboardData();
   const playerRank = entries.findIndex(e => e.isPlayer) + 1;
-  if (playerRank === 1 && lastPlayerRank > 2 && competitors.length > 0) {
+  if (playerRank === 1 && lastPlayerRank > 2 && activeCompetitors.length > 0) {
     showEvent('comeback', '<span class="icon icon-fire"></span> Epic Comeback!', `From #${lastPlayerRank} to #1!`);
     eventCooldown = 300;
     return;
@@ -3818,7 +3818,7 @@ function tryAgain() {
   currentJob = null;
   availableJobs = [];
   cargos = [];
-  competitors = [];
+  activeCompetitors = [];
   competitorJobs = [];
   waterParticles = [];
   ripples = [];
@@ -3826,7 +3826,7 @@ function tryAgain() {
   // Spawn AI and jobs
   const region = getCurrentRegion();
   for (let i = 0; i < region.aiCount; i++) {
-    competitors.push(createCompetitor(i));
+    activeCompetitors.push(createCompetitor(i));
   }
   spawnNewJob();
   updateUI();
@@ -4283,7 +4283,7 @@ function updatePhysicsStep(delta, thrust, turn) {
 
 
   // Soft Collision with AI Competitors (to prevent clipping/hard bumps)
-  for (const comp of competitors) {
+  for (const comp of activeCompetitors) {
     // Skip collision if AI is trying to recover (needs to move freely)
     if (comp.state === 'RECOVER') continue;
 
