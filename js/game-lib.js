@@ -743,17 +743,7 @@ function unlockTier(tierIndex) {
 // Weather System
 // WEATHER_TYPES moved to constants.js
 
-const weatherSystem = {
-  current: WEATHER_TYPES.CLEAR,
-  windAngle: 0,
-  windTarget: 0,
-  timeRemaining: 3600,
-  nextWeather: null,
-  raindrops: [],
-  lightning: 0,
-  // Currents - zones with water flow
-  currents: []
-};
+// weatherSystem state moved to state.js
 
 function initCurrents() {
   // Create current zones across the expanded map
