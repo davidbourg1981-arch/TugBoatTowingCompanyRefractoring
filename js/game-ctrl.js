@@ -137,34 +137,6 @@ function initGame(isLoaded = false) {
 }
 
 
-// --- Main Update Loop Coordinator ---
-
-function update(delta) {
-    if (game.paused) return;
-
-    game.time += delta / 60; // seconds
-
-    // core physics
-    if (typeof updateTugboat === 'function') updateTugboat(delta);
-    if (typeof updateCargo === 'function') updateCargo(delta);
-    if (typeof updateRope === 'function') updateRope(delta);
-    if (typeof updateCamera === 'function') updateCamera();
-
-    // environment
-    if (typeof changeWeather === 'function') {
-        weatherSystem.timeRemaining -= delta / 60;
-        if (weatherSystem.timeRemaining <= 0) changeWeather();
-        if (typeof updateRegionFeatures === 'function') updateRegionFeatures(delta);
-    }
-
-    // AI & Jobs
-    if (typeof updateCompetitors === 'function') updateCompetitors(delta);
-
-    // Save check (every 30s)
-    if (Math.floor(game.time) % 30 === 0 && Math.floor(game.time) > 1) {
-        // Handled by save-load.js autosave trigger usually
-    }
-}
 
 // --- Missing Input Helpers ---
 // keys object is in state.js
@@ -191,4 +163,4 @@ window.showOptions = showOptions;
 window.hideOptions = hideOptions;
 window.closeJobBoard = closeJobBoard;
 window.initGame = initGame;
-window.update = update;
+// Note: update() is defined in main.js, not here
