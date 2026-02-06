@@ -358,7 +358,7 @@ function updateOptionsUI() {
 // Keybinding system
 // defaultKeybinds moved to constants.js
 
-let keybinds = { ...defaultKeybinds };
+// keybinds moved to state.js
 let remapTarget = null;
 
 function openRemapPanel() {

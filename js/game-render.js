@@ -2757,11 +2757,11 @@ function updateMenuButtons() {
   if (!continueBtn || !newGameBtn) return;
 
   // Check if active slot has save data
-  const raw = localStorage.getItem(_saveKey(activeSaveSlot));
-  if (raw) {
+  if (hasSaveInSlot(activeSaveSlot)) {
     try {
+      const raw = localStorage.getItem(SAVE_PREFIX + activeSaveSlot);
       const data = JSON.parse(raw);
-      if (data && data.savedAt) {
+      if (data && data.timestamp) {
         continueBtn.style.display = 'flex';
         // Show profile info on continue button
         const money = (data.game && data.game.money) || 0;
@@ -2791,7 +2791,7 @@ startGameWithDifficulty = function (diff) {
 // Update menu on load
 setTimeout(updateMenuButtons, 100);
 
-init();
+// init() call removed - handled by game-ctrl.js
 
 /* ==========================================================
    Debug / Integration Surface (non-breaking)

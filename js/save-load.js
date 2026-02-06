@@ -103,3 +103,26 @@ function resetProgress() {
     deleteSaveSlot(0);
     location.reload();
 }
+
+// Internal helper for usage in game-render.js
+function _saveKey(slot) { return SAVE_PREFIX + slot; }
+
+// Wrap important progression functions to autosave after changes.
+function _wrapAutosave(fnName, reason) {
+    try {
+        const fn = window[fnName];
+        if (typeof fn !== 'function') return;
+        if (fn.__autosaveWrapped) return;
+        const wrapped = function (...args) {
+            const r = fn.apply(this, args);
+            // defer so any state changes finish first
+            setTimeout(() => {
+                if (typeof triggerAutosave === 'function') triggerAutosave(reason || fnName);
+                else if (typeof saveToSlot === 'function' && typeof activeSaveSlot !== 'undefined') saveToSlot(activeSaveSlot);
+            }, 0);
+            return r;
+        };
+        wrapped.__autosaveWrapped = true;
+        window[fnName] = wrapped;
+    } catch (e) { }
+}

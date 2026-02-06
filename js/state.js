@@ -112,7 +112,7 @@ const gamepadState = {
 
 // Helper for UI/Input state
 let gpFocusIndex = 0;
-let gpFocusedEl = null;
+let gpFocusedEl = null; // Added back commonly used globals to avoid ref error
 let remapTarget = null;
 let keybinds = { ...defaultKeybinds }; // constants.js
 
