@@ -76,8 +76,8 @@
         ctx.setLineDash([]);
         // Drift direction arrow
         const arrowLen = 35;
-        const ax = cargo.x + Math.cos(weather.windAngle) * arrowLen;
-        const ay = cargo.y + Math.sin(weather.windAngle) * arrowLen;
+        const ax = cargo.x + Math.cos(weatherSystem.windAngle) * arrowLen;
+        const ay = cargo.y + Math.sin(weatherSystem.windAngle) * arrowLen;
         ctx.strokeStyle = `rgba(26, 188, 156, ${pulse})`;
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -88,9 +88,9 @@
         const headAngle = 0.5;
         ctx.beginPath();
         ctx.moveTo(ax, ay);
-        ctx.lineTo(ax - Math.cos(weather.windAngle - headAngle) * 10, ay - Math.sin(weather.windAngle - headAngle) * 10);
+        ctx.lineTo(ax - Math.cos(weatherSystem.windAngle - headAngle) * 10, ay - Math.sin(weatherSystem.windAngle - headAngle) * 10);
         ctx.moveTo(ax, ay);
-        ctx.lineTo(ax - Math.cos(weather.windAngle + headAngle) * 10, ay - Math.sin(weather.windAngle + headAngle) * 10);
+        ctx.lineTo(ax - Math.cos(weatherSystem.windAngle + headAngle) * 10, ay - Math.sin(weatherSystem.windAngle + headAngle) * 10);
         ctx.stroke();
       }
     }
@@ -112,7 +112,7 @@
 
   ctx.restore();
 
-  // Draw weather effects (screen space, after game world)
+  // Draw weatherSystem effects (screen space, after game world)
   drawWeatherEffects();
   drawWindIndicator();
   drawZoomIndicator();
@@ -2805,7 +2805,7 @@ setTimeout(updateMenuButtons, 100);
 window.GameAPI = window.GameAPI || {
   version: 'refactor-pass-3',
   // State access (read-only references)
-  getState: () => ({ game, tugboat, career, licenses, options, weather, currentJob, playerTier }),
+  getState: () => ({ game, tugboat, career, licenses, options, weatherSystem, currentJob, playerTier }),
   // Safe helpers
   setMoney: (amount) => { game.money = Math.max(0, Math.floor(amount || 0)); try { updateUI(); } catch (e) { } },
   addMoney: (amount) => { game.money = Math.max(0, game.money + Math.floor(amount || 0)); try { updateUI(); } catch (e) { } },
@@ -2838,7 +2838,7 @@ window.GameAPI = window.GameAPI || {
   G.career = career;
   G.licenses = licenses;
   G.options = options;
-  G.weather = weather;
+  G.weatherSystem = weatherSystem;
 
   // Collections / dynamic references
   G.collections = {
@@ -2926,7 +2926,7 @@ window.GameAPI = window.GameAPI || {
       career: G.career,
       licenses: G.licenses,
       options: G.options,
-      weather: G.weather,
+      weatherSystem: G.weatherSystem,
       currentJob: vars.currentJob,
       playerTier: vars.playerTier
     });

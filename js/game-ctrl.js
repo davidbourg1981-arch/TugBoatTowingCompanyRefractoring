@@ -152,8 +152,8 @@ function update(delta) {
 
     // environment
     if (typeof changeWeather === 'function') {
-        weather.timeRemaining -= delta / 60;
-        if (weather.timeRemaining <= 0) changeWeather();
+        weatherSystem.timeRemaining -= delta / 60;
+        if (weatherSystem.timeRemaining <= 0) changeWeather();
         if (typeof updateRegionFeatures === 'function') updateRegionFeatures(delta);
     }
 

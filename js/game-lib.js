@@ -207,10 +207,10 @@ function toggleParticlesOption() {
 }
 
 function toggleWeatherFxOption() {
-  options.weatherFx = !options.weatherFx;
-  const btn = document.getElementById('weatherFxToggle');
-  btn.textContent = options.weatherFx ? 'ON' : 'OFF';
-  btn.classList.toggle('active', options.weatherFx);
+  options.weatherSystemFx = !options.weatherSystemFx;
+  const btn = document.getElementById('weatherSystemFxToggle');
+  btn.textContent = options.weatherSystemFx ? 'ON' : 'OFF';
+  btn.classList.toggle('active', options.weatherSystemFx);
 }
 
 function cycleQuality() {
@@ -223,15 +223,15 @@ function cycleQuality() {
   if (options.quality === 'Low') {
     options.waves = false;
     options.particles = false;
-    options.weatherFx = false;
+    options.weatherSystemFx = false;
   } else if (options.quality === 'Medium') {
     options.waves = true;
     options.particles = false;
-    options.weatherFx = true;
+    options.weatherSystemFx = true;
   } else {
     options.waves = true;
     options.particles = true;
-    options.weatherFx = true;
+    options.weatherSystemFx = true;
   }
   updateOptionsUI();
 }
@@ -351,8 +351,8 @@ function updateOptionsUI() {
   document.getElementById('wavesToggle').classList.toggle('active', options.waves);
   document.getElementById('particlesToggle').textContent = options.particles ? 'ON' : 'OFF';
   document.getElementById('particlesToggle').classList.toggle('active', options.particles);
-  document.getElementById('weatherFxToggle').textContent = options.weatherFx ? 'ON' : 'OFF';
-  document.getElementById('weatherFxToggle').classList.toggle('active', options.weatherFx);
+  document.getElementById('weatherSystemFxToggle').textContent = options.weatherSystemFx ? 'ON' : 'OFF';
+  document.getElementById('weatherSystemFxToggle').classList.toggle('active', options.weatherSystemFx);
 }
 
 // Keybinding system
@@ -462,10 +462,10 @@ function quitToMenu() {
   career.regionDeliveries = [0, 0, 0, 0, 0];
   // Reset player tier (new progression system)
   playerTier = 0;
-  // Reset weather
+  // Reset weatherSystem
   initCurrents();
-  weather.current = WEATHER_TYPES.CLEAR;
-  weather.raindrops = [];
+  weatherSystem.current = WEATHER_TYPES.CLEAR;
+  weatherSystem.raindrops = [];
   // Reset tide
   TIDE.phase = 0;
   // Hide job board if showing
@@ -743,7 +743,7 @@ function unlockTier(tierIndex) {
 // Weather System
 // WEATHER_TYPES moved to constants.js
 
-const weather = {
+const weatherSystem = {
   current: WEATHER_TYPES.CLEAR,
   windAngle: 0,
   windTarget: 0,
@@ -757,7 +757,7 @@ const weather = {
 
 function initCurrents() {
   // Create current zones across the expanded map
-  weather.currents = [
+  weatherSystem.currents = [
     // Northern currents
     { x: 500, y: 400, radius: 180, angle: Math.PI * 0.25, strength: 0.012 },
     { x: 1500, y: 350, radius: 200, angle: Math.PI * 1.75, strength: 0.015 },
@@ -784,10 +784,10 @@ function initCurrents() {
 }
 
 function changeWeather() {
-  const weatherTypes = Object.values(WEATHER_TYPES);
+  const weatherSystemTypes = Object.values(WEATHER_TYPES);
   const region = getCurrentRegion();
 
-  // Weight weather by region - later regions have worse weather
+  // Weight weatherSystem by region - later regions have worse weatherSystem
   let weights;
   if (career.currentRegion === 0) {
     weights = [0.6, 0.2, 0.15, 0.05, 0]; // Starter: mostly clear
@@ -797,31 +797,31 @@ function changeWeather() {
     weights = [0.2, 0.2, 0.2, 0.25, 0.15]; // Late: more storms
   }
 
-  // Pick weather based on weights
+  // Pick weatherSystem based on weights
   const rand = Math.random();
   let sum = 0;
   let newWeather = WEATHER_TYPES.CLEAR;
-  for (let i = 0; i < weatherTypes.length; i++) {
+  for (let i = 0; i < weatherSystemTypes.length; i++) {
     sum += weights[i];
     if (rand < sum) {
-      newWeather = weatherTypes[i];
+      newWeather = weatherSystemTypes[i];
       break;
     }
   }
 
-  weather.current = newWeather;
-  weather.windAngle = Math.random() * Math.PI * 2;
-  weather.windTarget = weather.windAngle;
+  weatherSystem.current = newWeather;
+  weatherSystem.windAngle = Math.random() * Math.PI * 2;
+  weatherSystem.windTarget = weatherSystem.windAngle;
 
   const [minDur, maxDur] = newWeather.duration;
-  weather.timeRemaining = minDur + Math.random() * (maxDur - minDur);
+  weatherSystem.timeRemaining = minDur + Math.random() * (maxDur - minDur);
 
   // Initialize raindrops if raining
   if (newWeather === WEATHER_TYPES.RAIN || newWeather === WEATHER_TYPES.STORM) {
-    weather.raindrops = [];
+    weatherSystem.raindrops = [];
     const count = newWeather === WEATHER_TYPES.STORM ? 150 : 80;
     for (let i = 0; i < count; i++) {
-      weather.raindrops.push({
+      weatherSystem.raindrops.push({
         x: Math.random() * VIEW.width,
         y: Math.random() * VIEW.height,
         speed: 8 + Math.random() * 6,
@@ -829,10 +829,10 @@ function changeWeather() {
       });
     }
   } else {
-    weather.raindrops = [];
+    weatherSystem.raindrops = [];
   }
 
-  // Show weather change notification
+  // Show weatherSystem change notification
   if (gameStarted && newWeather !== WEATHER_TYPES.CLEAR) {
     showEvent('rival', `${newWeather.icon} ${newWeather.name} Weather!`,
       `${Math.round((newWeather.payBonus - 1) * 100)}% bonus pay`);
@@ -842,31 +842,31 @@ function changeWeather() {
 }
 
 function updateWeather(delta = 1) {
-  weather.timeRemaining -= delta;
+  weatherSystem.timeRemaining -= delta;
 
-  if (weather.timeRemaining <= 0) {
+  if (weatherSystem.timeRemaining <= 0) {
     changeWeather();
   }
 
   // Slowly shift wind direction
   if (Math.random() < 0.01 * delta) {
-    weather.windTarget = weather.windAngle + (Math.random() - 0.5) * 0.5;
+    weatherSystem.windTarget = weatherSystem.windAngle + (Math.random() - 0.5) * 0.5;
   }
-  weather.windAngle += (weather.windTarget - weather.windAngle) * 0.01 * delta;
+  weatherSystem.windAngle += (weatherSystem.windTarget - weatherSystem.windAngle) * 0.01 * delta;
 
   // Lightning flashes in storms
-  if (weather.current === WEATHER_TYPES.STORM) {
-    if (weather.lightning > 0) weather.lightning -= delta;
+  if (weatherSystem.current === WEATHER_TYPES.STORM) {
+    if (weatherSystem.lightning > 0) weatherSystem.lightning -= delta;
     if (Math.random() < 0.003 * delta) {
-      weather.lightning = 8;
+      weatherSystem.lightning = 8;
       // Thunder sound could go here
     }
   }
 
   // Update raindrops
-  for (const drop of weather.raindrops) {
+  for (const drop of weatherSystem.raindrops) {
     drop.y += drop.speed * delta;
-    drop.x += weather.current.windStrength * 100 * delta;
+    drop.x += weatherSystem.current.windStrength * 100 * delta;
     if (drop.y > VIEW.height) {
       drop.y = -drop.length;
       drop.x = Math.random() * VIEW.width;
@@ -877,16 +877,16 @@ function updateWeather(delta = 1) {
 }
 
 function applyWeatherPhysics(obj, delta = 1) {
-  const w = weather.current;
+  const w = weatherSystem.current;
 
   // Apply wind
   if (w.windStrength > 0) {
-    obj.vx += Math.cos(weather.windAngle) * w.windStrength * delta;
-    obj.vy += Math.sin(weather.windAngle) * w.windStrength * delta;
+    obj.vx += Math.cos(weatherSystem.windAngle) * w.windStrength * delta;
+    obj.vy += Math.sin(weatherSystem.windAngle) * w.windStrength * delta;
   }
 
   // Apply currents
-  for (const current of weather.currents) {
+  for (const current of weatherSystem.currents) {
     const dx = obj.x - current.x;
     const dy = obj.y - current.y;
     const dist = Math.hypot(dx, dy);
@@ -895,17 +895,17 @@ function applyWeatherPhysics(obj, delta = 1) {
       // Stronger effect toward center
       const strength = current.strength * (1 - dist / current.radius);
       // Weather multiplies current strength
-      const weatherMult = 1 + w.currentStrength * 10;
-      obj.vx += Math.cos(current.angle) * strength * weatherMult * delta;
-      obj.vy += Math.sin(current.angle) * strength * weatherMult * delta;
+      const weatherSystemMult = 1 + w.currentStrength * 10;
+      obj.vx += Math.cos(current.angle) * strength * weatherSystemMult * delta;
+      obj.vy += Math.sin(current.angle) * strength * weatherSystemMult * delta;
     }
   }
 }
 
 function drawWeatherEffects() {
   if (__safeMode) return;
-  if (!options.weatherFx) return;
-  const w = weather.current;
+  if (!options.weatherSystemFx) return;
+  const w = weatherSystem.current;
 
   // Fog overlay
   if (w.visibility < 1.0) {
@@ -928,20 +928,20 @@ function drawWeatherEffects() {
   }
 
   // Rain
-  if (weather.raindrops.length > 0) {
+  if (weatherSystem.raindrops.length > 0) {
     ctx.strokeStyle = 'rgba(200, 220, 255, 0.5)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    for (const drop of weather.raindrops) {
+    for (const drop of weatherSystem.raindrops) {
       ctx.moveTo(drop.x, drop.y);
-      ctx.lineTo(drop.x - weather.current.windStrength * 30, drop.y + drop.length);
+      ctx.lineTo(drop.x - weatherSystem.current.windStrength * 30, drop.y + drop.length);
     }
     ctx.stroke();
   }
 
   // Lightning flash
-  if (weather.lightning > 0) {
-    ctx.fillStyle = `rgba(255, 255, 255, ${weather.lightning * 0.08})`;
+  if (weatherSystem.lightning > 0) {
+    ctx.fillStyle = `rgba(255, 255, 255, ${weatherSystem.lightning * 0.08})`;
     ctx.fillRect(0, 0, VIEW.width, VIEW.height);
   }
 
@@ -962,7 +962,7 @@ function drawCurrents() {
 
   // Draw current indicators on water (in world space)
   ctx.globalAlpha = 0.3;
-  for (const current of weather.currents) {
+  for (const current of weatherSystem.currents) {
     // Skip if off screen
     if (current.x < camera.x - current.radius || current.x > camera.x + viewW + current.radius ||
       current.y < camera.y - current.radius || current.y > camera.y + viewH + current.radius) continue;
@@ -1005,16 +1005,16 @@ function drawWindIndicator() {
   const arrow = document.getElementById('windArrow');
   const icon = document.getElementById('windIcon');
 
-  if (weather.current.windStrength <= 0) {
+  if (weatherSystem.current.windStrength <= 0) {
     indicator.style.display = 'none';
     return;
   }
 
   indicator.style.display = 'flex';
   // Convert radians to degrees for CSS rotation
-  const degrees = (weather.windAngle * 180 / Math.PI);
+  const degrees = (weatherSystem.windAngle * 180 / Math.PI);
   arrow.style.transform = `rotate(${degrees}deg)`;
-  icon.innerHTML = weather.current.icon;
+  icon.innerHTML = weatherSystem.current.icon;
 }
 
 function drawZoomIndicator() {
@@ -1032,10 +1032,10 @@ function drawZoomIndicator() {
 }
 
 function updateWeatherUI() {
-  const el = document.getElementById('weatherDisplay');
+  const el = document.getElementById('weatherSystemDisplay');
   if (el) {
-    el.innerHTML = `${weather.current.icon} ${weather.current.name}`;
-    el.style.color = weather.current.payBonus > 1 ? '#ffd700' : '#7aa8cc';
+    el.innerHTML = `${weatherSystem.current.icon} ${weatherSystem.current.name}`;
+    el.style.color = weatherSystem.current.payBonus > 1 ? '#ffd700' : '#7aa8cc';
   }
 }
 
@@ -2214,7 +2214,7 @@ function findNearestWaterDirection(x, y) {
 let __fatalError = null;
 let __debugHudEnabled = false;
 let __safeMode = false;
-const __safeModePrev = { particles: null, weatherFx: null, waves: null };
+const __safeModePrev = { particles: null, weatherSystemFx: null, waves: null };
 
 function setupDevToolsUI() {
   // Crash overlay buttons
@@ -2297,16 +2297,16 @@ function setSafeMode(enabled) {
   // Remember previous values on enable
   if (__safeMode) {
     if (__safeModePrev.particles === null) __safeModePrev.particles = options.particles;
-    if (__safeModePrev.weatherFx === null) __safeModePrev.weatherFx = options.weatherFx;
+    if (__safeModePrev.weatherSystemFx === null) __safeModePrev.weatherSystemFx = options.weatherSystemFx;
     if (__safeModePrev.waves === null) __safeModePrev.waves = options.waves;
 
     options.particles = false;
-    options.weatherFx = false;
+    options.weatherSystemFx = false;
     options.waves = false;
   } else {
     // Restore previous values if we captured them
     if (__safeModePrev.particles !== null) options.particles = __safeModePrev.particles;
-    if (__safeModePrev.weatherFx !== null) options.weatherFx = __safeModePrev.weatherFx;
+    if (__safeModePrev.weatherSystemFx !== null) options.weatherSystemFx = __safeModePrev.weatherSystemFx;
     if (__safeModePrev.waves !== null) options.waves = __safeModePrev.waves;
   }
 
@@ -2387,7 +2387,7 @@ function updateDebugHud(deltaMs, deltaNorm) {
   const rippleCount = (typeof ripples !== 'undefined' && ripples && ripples.length != null) ? ripples.length : 0;
 
   const zoomLevel = (typeof zoom !== 'undefined' && zoom && typeof zoom.level === 'number') ? zoom.level : (typeof camera !== 'undefined' && camera && typeof camera.zoom === 'number' ? camera.zoom : 1);
-  const weatherName = (typeof weather !== 'undefined' && weather && weather.current && weather.current.name) ? weather.current.name : 'Unknown';
+  const weatherSystemName = (typeof weatherSystem !== 'undefined' && weatherSystem && weatherSystem.current && weatherSystem.current.name) ? weatherSystem.current.name : 'Unknown';
 
   // Zone diagnostics (helps catch "phantom collisions")
   const bx = (typeof tugboat !== 'undefined' && tugboat) ? tugboat.x : 0;
@@ -2410,7 +2410,7 @@ function updateDebugHud(deltaMs, deltaNorm) {
 
   hudEl.innerHTML = `
         <div><strong>FPS</strong>: ${__hud.fpsSmoothed.toFixed(0)} <span class="muted">(dt ${deltaMs.toFixed(1)}ms / \u0394 ${deltaNorm.toFixed(2)})</span></div>
-        <div><strong>Zoom</strong>: ${zoomLevel.toFixed(2)} <span class="muted">Weather: ${weatherName}${__safeMode ? ' <span class="warn">SAFE</span>' : ''}</span></div>
+        <div><strong>Zoom</strong>: ${zoomLevel.toFixed(2)} <span class="muted">Weather: ${weatherSystemName}${__safeMode ? ' <span class="warn">SAFE</span>' : ''}</span></div>
         <div><strong>Zone</strong>: ${zoneName} | <strong>River</strong>: ${riverName} | <strong>Dock</strong>: ${dockName}</div>
         <div><strong>Pos</strong>: ${bx.toFixed(0)}, ${by.toFixed(0)} | <strong>Tier</strong>: ${typeof playerTier !== 'undefined' ? JOB_TIERS[playerTier].name : 'N/A'}</div>
         <div><strong>Entities</strong>: AI ${aiCount} | particles ${particleCount} | ripples ${rippleCount}</div>
@@ -2505,7 +2505,7 @@ function init() {
     activeCompetitors.push(createCompetitor(i));
   }
 
-  // Initialize weather system
+  // Initialize weatherSystem system
   initCurrents();
   changeWeather();
 
@@ -3294,15 +3294,15 @@ function completeJob() {
   }
 
   // Weather bonus - enhanced with storm license
-  if (weather.current.payBonus > 1) {
-    let weatherMult = weather.current.payBonus - 1;
+  if (weatherSystem.current.payBonus > 1) {
+    let weatherSystemMult = weatherSystem.current.payBonus - 1;
     // Storm operations license doubles storm bonus
-    if (hasLicense('storm') && weather.current === WEATHER_TYPES.STORM) {
-      weatherMult *= 2;
+    if (hasLicense('storm') && weatherSystem.current === WEATHER_TYPES.STORM) {
+      weatherSystemMult *= 2;
     }
-    const weatherBonus = Math.floor(pay * weatherMult);
-    pay += weatherBonus;
-    bonusText += ` (+$${weatherBonus} Weather)`;
+    const weatherSystemBonus = Math.floor(pay * weatherSystemMult);
+    pay += weatherSystemBonus;
+    bonusText += ` (+$${weatherSystemBonus} Weather)`;
   }
 
   // Chain bonus - deliver within 45 seconds of last delivery
@@ -3852,7 +3852,7 @@ function updateCamera(delta = 1) {
 }
 
 function updateEnvironment(delta) {
-  // Update weather
+  // Update weatherSystem
   updateWeather(delta);
 
   // Update region features (seagulls, etc.)
@@ -3881,11 +3881,11 @@ function updateJobRules(delta) {
       for (const cargo of cargos) {
         if (cargo.driftAngle !== null) {
           // Drift with wind and currents
-          const driftSpeed = (0.3 + weather.current.windStrength * 0.2) * driftMult * delta;
-          cargo.x += Math.cos(weather.windAngle) * driftSpeed;
-          cargo.y += Math.sin(weather.windAngle) * driftSpeed;
+          const driftSpeed = (0.3 + weatherSystem.current.windStrength * 0.2) * driftMult * delta;
+          cargo.x += Math.cos(weatherSystem.windAngle) * driftSpeed;
+          cargo.y += Math.sin(weatherSystem.windAngle) * driftSpeed;
           // Also drift with currents
-          for (const current of weather.currents) {
+          for (const current of weatherSystem.currents) {
             const dx = cargo.x - current.x;
             const dy = cargo.y - current.y;
             const dist = Math.hypot(dx, dy);
@@ -4227,7 +4227,7 @@ function updatePhysicsStep(delta, thrust, turn) {
   tugboat.vx *= dragFactor; tugboat.vy *= dragFactor;
   tugboat.angularVel *= angularDragFactor;
 
-  // Apply weather effects (wind and currents)
+  // Apply weatherSystem effects (wind and currents)
   applyWeatherPhysics(tugboat, delta);
 
   // Lateral slip control (drift at speed): damp sideways velocity more when slow
@@ -4433,13 +4433,13 @@ function updateCargo(delta = 1) {
   while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
   cargo.angle += angleDiff * 0.022 * delta;
 
-  // Apply weather to cargo (wind affects bigger cargo more)
+  // Apply weatherSystem to cargo (wind affects bigger cargo more)
   applyWeatherPhysics(cargo, delta);
   // Extra wind effect on cargo based on size
-  if (weather.current.windStrength > 0) {
+  if (weatherSystem.current.windStrength > 0) {
     const sizeBonus = cargo.width * 0.0003;
-    cargo.vx += Math.cos(weather.windAngle) * weather.current.windStrength * sizeBonus * 20 * delta;
-    cargo.vy += Math.sin(weather.windAngle) * weather.current.windStrength * sizeBonus * 20 * delta;
+    cargo.vx += Math.cos(weatherSystem.windAngle) * weatherSystem.current.windStrength * sizeBonus * 20 * delta;
+    cargo.vy += Math.sin(weatherSystem.windAngle) * weatherSystem.current.windStrength * sizeBonus * 20 * delta;
   }
 
   // Apply river current to cargo (bigger cargo = more affected)
@@ -4472,12 +4472,12 @@ function updateCargo(delta = 1) {
       while (fAngleDiff < -Math.PI) fAngleDiff += Math.PI * 2;
       follower.angle += fAngleDiff * 0.018 * delta; // Slower turn = more swing
 
-      // Apply weather
+      // Apply weatherSystem
       applyWeatherPhysics(follower, delta);
-      if (weather.current.windStrength > 0) {
+      if (weatherSystem.current.windStrength > 0) {
         const sizeBonus = follower.width * 0.0004;
-        follower.vx += Math.cos(weather.windAngle) * weather.current.windStrength * sizeBonus * 20 * delta;
-        follower.vy += Math.sin(weather.windAngle) * weather.current.windStrength * sizeBonus * 20 * delta;
+        follower.vx += Math.cos(weatherSystem.windAngle) * weatherSystem.current.windStrength * sizeBonus * 20 * delta;
+        follower.vy += Math.sin(weatherSystem.windAngle) * weatherSystem.current.windStrength * sizeBonus * 20 * delta;
       }
 
       // Apply river current to tandem cargo

@@ -95,7 +95,7 @@ let activeCompetitors = []; // Renamed from competitors to avoid conflicts
 let competitorJobs = [];
 let waterParticles = [];
 let ripples = [];
-let weather = {
+let weatherSystem = {
     current: 'CLEAR',
     timeRemaining: 999,
     windX: 0,
