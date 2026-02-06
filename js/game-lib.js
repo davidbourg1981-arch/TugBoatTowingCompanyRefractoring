@@ -688,15 +688,7 @@ function selectBoat(index) {
 // Audio init moved to audio.js
 
 // Engine and Sound functions moved to audio.js
-gain.gain.setValueAtTime(0.12 * vol, now);
-gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-osc.start(now);
-osc.stop(now + 0.25);
-break;
-
-    case 'success':
-osc.type = 'sine';
-osc.frequency.setValueAtTime(523, now);
+// Code cleanup complete
 // Audio code cleanup complete
 
 // Polyfill moved to utils.js
