@@ -137,3 +137,6 @@ let leaderboardVisible = false;
 // Chain bonus
 let lastDeliveryTime = 0;
 let chainCount = 0;
+
+// Wave animation offset
+let waveOffset = 0;
