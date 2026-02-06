@@ -114,7 +114,7 @@ const gamepadState = {
 let gpFocusIndex = 0;
 let gpFocusedEl = null; // Added back commonly used globals to avoid ref error
 let remapTarget = null;
-let keybinds = { ...defaultKeybinds }; // constants.js
+let currentKeybinds = { ...defaultKeybinds }; // constants.js
 
 // Leaderboard state
 let lastPlayerRank = 1;

@@ -87,7 +87,7 @@ function initGame(isLoaded = false) {
     if (gameStarted) return;
 
     // Canvas setup
-    if (canvas) {
+    if (typeof canvas !== 'undefined' && canvas) {
         // If screen is smaller than view, scale down
         const aspect = VIEW.width / VIEW.height;
         // We keep internal resolution fixed at 900x600 for logic simplicity

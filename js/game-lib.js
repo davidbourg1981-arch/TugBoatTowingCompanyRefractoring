@@ -358,7 +358,7 @@ function updateOptionsUI() {
 // Keybinding system
 // defaultKeybinds moved to constants.js
 
-// keybinds moved to state.js
+// currentKeybinds moved to state.js
 let remapTarget = null;
 
 function openRemapPanel() {
@@ -391,35 +391,35 @@ function getKeyDisplayName(code) {
 }
 
 function updateRemapUI() {
-  document.getElementById('remapUp').textContent = getKeyDisplayName(keybinds.up);
-  document.getElementById('remapDown').textContent = getKeyDisplayName(keybinds.down);
-  document.getElementById('remapLeft').textContent = getKeyDisplayName(keybinds.left);
-  document.getElementById('remapRight').textContent = getKeyDisplayName(keybinds.right);
-  document.getElementById('remapAttach').textContent = getKeyDisplayName(keybinds.attach);
-  document.getElementById('remapRefuel').textContent = getKeyDisplayName(keybinds.refuel);
-  document.getElementById('remapRepair').textContent = getKeyDisplayName(keybinds.repair);
-  document.getElementById('remapHorn').textContent = getKeyDisplayName(keybinds.horn);
-  document.getElementById('remapLeaderboard').textContent = getKeyDisplayName(keybinds.leaderboard);
+  document.getElementById('remapUp').textContent = getKeyDisplayName(currentKeybinds.up);
+  document.getElementById('remapDown').textContent = getKeyDisplayName(currentKeybinds.down);
+  document.getElementById('remapLeft').textContent = getKeyDisplayName(currentKeybinds.left);
+  document.getElementById('remapRight').textContent = getKeyDisplayName(currentKeybinds.right);
+  document.getElementById('remapAttach').textContent = getKeyDisplayName(currentKeybinds.attach);
+  document.getElementById('remapRefuel').textContent = getKeyDisplayName(currentKeybinds.refuel);
+  document.getElementById('remapRepair').textContent = getKeyDisplayName(currentKeybinds.repair);
+  document.getElementById('remapHorn').textContent = getKeyDisplayName(currentKeybinds.horn);
+  document.getElementById('remapLeaderboard').textContent = getKeyDisplayName(currentKeybinds.leaderboard);
 
   // Update controls display in options
-  document.getElementById('keyUp').textContent = getKeyDisplayName(keybinds.up);
-  document.getElementById('keyDown').textContent = getKeyDisplayName(keybinds.down);
-  document.getElementById('keyLeft').textContent = getKeyDisplayName(keybinds.left);
-  document.getElementById('keyRight').textContent = getKeyDisplayName(keybinds.right);
-  document.getElementById('keyAttach').textContent = getKeyDisplayName(keybinds.attach);
-  document.getElementById('keyRefuel').textContent = getKeyDisplayName(keybinds.refuel);
-  document.getElementById('keyRepair').textContent = getKeyDisplayName(keybinds.repair);
-  document.getElementById('keyHorn').textContent = getKeyDisplayName(keybinds.horn);
-  document.getElementById('keyLeaderboard').textContent = getKeyDisplayName(keybinds.leaderboard);
+  document.getElementById('keyUp').textContent = getKeyDisplayName(currentKeybinds.up);
+  document.getElementById('keyDown').textContent = getKeyDisplayName(currentKeybinds.down);
+  document.getElementById('keyLeft').textContent = getKeyDisplayName(currentKeybinds.left);
+  document.getElementById('keyRight').textContent = getKeyDisplayName(currentKeybinds.right);
+  document.getElementById('keyAttach').textContent = getKeyDisplayName(currentKeybinds.attach);
+  document.getElementById('keyRefuel').textContent = getKeyDisplayName(currentKeybinds.refuel);
+  document.getElementById('keyRepair').textContent = getKeyDisplayName(currentKeybinds.repair);
+  document.getElementById('keyHorn').textContent = getKeyDisplayName(currentKeybinds.horn);
+  document.getElementById('keyLeaderboard').textContent = getKeyDisplayName(currentKeybinds.leaderboard);
 }
 
 function resetKeybinds() {
-  keybinds = { ...defaultKeybinds };
+  currentKeybinds = { ...defaultKeybinds };
   updateRemapUI();
 }
 
 function isKeyBound(action) {
-  return (code) => code === keybinds[action] ||
+  return (code) => code === currentKeybinds[action] ||
     (action === 'up' && code === 'ArrowUp') ||
     (action === 'down' && code === 'ArrowDown') ||
     (action === 'left' && code === 'ArrowLeft') ||
@@ -2435,7 +2435,7 @@ function init() {
     if (remapTarget && document.getElementById('remapPanel').classList.contains('show')) {
       e.preventDefault();
       if (e.code !== 'Escape') {
-        keybinds[remapTarget] = e.code;
+        currentKeybinds[remapTarget] = e.code;
         updateRemapUI();
       }
       remapTarget = null;
@@ -2450,18 +2450,18 @@ function init() {
     }
     keys[e.code] = true;
 
-    // Handle keybinds
-    if ((e.code === keybinds.attach || e.code === 'Space') && gameStarted) {
+    // Handle currentKeybinds
+    if ((e.code === currentKeybinds.attach || e.code === 'Space') && gameStarted) {
       e.preventDefault();
       toggleAttachment();
     }
     if (e.code === 'Escape') {
       _handleEscapeAction();
     }
-    if ((e.code === keybinds.refuel || e.code === 'KeyF') && gameStarted) refuel();
-    if ((e.code === keybinds.repair || e.code === 'KeyR') && gameStarted) repair();
-    if ((e.code === keybinds.horn || e.code === 'KeyH') && gameStarted) playSound('horn');
-    if ((e.code === keybinds.leaderboard || e.code === 'KeyL') && gameStarted) toggleLeaderboard();
+    if ((e.code === currentKeybinds.refuel || e.code === 'KeyF') && gameStarted) refuel();
+    if ((e.code === currentKeybinds.repair || e.code === 'KeyR') && gameStarted) repair();
+    if ((e.code === currentKeybinds.horn || e.code === 'KeyH') && gameStarted) playSound('horn');
+    if ((e.code === currentKeybinds.leaderboard || e.code === 'KeyL') && gameStarted) toggleLeaderboard();
 
     // Zoom controls
     if (e.code === 'Equal' || e.code === 'NumpadAdd') {
@@ -4092,14 +4092,14 @@ function computeControls(delta) {
   let thrust = 0, turn = 0;
 
   // Keyboard input
-  const pressUp = (keys[keybinds.up] || keys['ArrowUp']);
-  const pressDown = (keys[keybinds.down] || keys['ArrowDown']);
+  const pressUp = (keys[currentKeybinds.up] || keys['ArrowUp']);
+  const pressDown = (keys[currentKeybinds.down] || keys['ArrowDown']);
 
   if (pressUp && pressDown) thrust = 0;
   else if (pressUp && tugboat.fuel > 0) thrust = 1;
   else if (pressDown && tugboat.fuel > 0) thrust = -0.5;
-  if (keys[keybinds.left] || keys['ArrowLeft']) turn = -1;
-  if (keys[keybinds.right] || keys['ArrowRight']) turn = 1;
+  if (keys[currentKeybinds.left] || keys['ArrowLeft']) turn = -1;
+  if (keys[currentKeybinds.right] || keys['ArrowRight']) turn = 1;
 
   // Merge with mobile input
   if (Math.abs(mobileThrust) > Math.abs(thrust)) thrust = mobileThrust;
