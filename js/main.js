@@ -80,6 +80,42 @@ function startGame() {
   generateRegionFeatures();
 }
 
+// Toggle cargo attachment/detachment
+function toggleAttachment() {
+  if (!gameStarted) return;
+
+  // If already attached, release cargo
+  if (tugboat.attached) {
+    if (typeof addRipple === 'function') addRipple(tugboat.attached.x, tugboat.attached.y, 30);
+    if (typeof playSound === 'function') playSound('splash');
+    tugboat.attached = null;
+    return;
+  }
+
+  // Try to attach to current job cargo
+  if (!currentJob || currentJob.pickedUp) return;
+
+  // Get all cargo for this job
+  const cargos = currentJob.allCargo || [currentJob.cargo];
+  if (!cargos || cargos.length === 0) return;
+
+  // Check if close enough to first cargo (or any cargo for tandem)
+  const mainCargo = cargos[0];
+  const dist = Math.hypot(tugboat.x - mainCargo.x, tugboat.y - mainCargo.y);
+  const attachRange = 80;
+
+  if (dist < attachRange) {
+    // Attach!
+    tugboat.attached = mainCargo;
+    currentJob.pickedUp = true;
+    if (typeof addRipple === 'function') addRipple(tugboat.x, tugboat.y, 30);
+    if (typeof playSound === 'function') playSound('attach');
+    if (typeof showEvent === 'function') {
+      showEvent('success', currentJob.jobType.icon + ' Cargo Attached!', 'Delivering to ' + (currentJob.delivery?.name || 'destination'));
+    }
+  }
+}
+
 function cycleQuality() {
   const qualities = ['Low', 'Medium', 'High'];
   const currentIdx = qualities.indexOf(options.quality);
