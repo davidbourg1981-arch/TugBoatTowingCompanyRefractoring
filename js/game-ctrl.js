@@ -97,6 +97,9 @@ function initGame(isLoaded = false) {
     // Audio
     if (typeof initAudio === 'function') initAudio();
 
+    // Initialize keyboard handlers (from main.js)
+    if (typeof init === 'function') init();
+
     // World Generation
     if (!isLoaded) {
         // New Game Setup
