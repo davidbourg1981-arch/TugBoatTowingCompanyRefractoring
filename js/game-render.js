@@ -1,4 +1,11 @@
-﻿function draw() {
+﻿// Visual helper for creating water ripple effects
+function addRipple(x, y, size = 20) {
+  if (typeof ripples !== 'undefined') {
+    ripples.push({ x: x, y: y, radius: size * 0.5, opacity: 0.5 });
+  }
+}
+
+function draw() {
   // Don't draw if game hasn't started
   if (!gameStarted) {
     ctx.fillStyle = '#1a5276';
