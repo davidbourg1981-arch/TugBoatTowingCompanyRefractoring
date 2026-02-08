@@ -114,7 +114,13 @@ function draw() {
     drawCompetitorTug(comp);
   }
 
-  if (tugboat.attached) drawRope();
+  if (tugboat.attached) {
+    drawRope();
+    // Ensure attached cargo is always drawn (may not be in cargos array)
+    if (tugboat.attached.width && tugboat.attached.height) {
+      drawCargoShip(tugboat.attached);
+    }
+  }
   drawTugboat(tugboat.x, tugboat.y, tugboat.angle);
 
   ctx.restore();
