@@ -3003,3 +3003,28 @@
       height: 20px;
       margin: 0;
     }
+
+    /* === Cursor Styles for Clickable Elements === */
+    .job-option,
+    .job-card,
+    .difficulty-card,
+    .license-item,
+    .boat-item,
+    .menu-btn,
+    .menu-btn-small,
+    .mini-btn,
+    .upgrade-buy-btn,
+    .close-btn,
+    button,
+    [data-gp-focusable],
+    [tabindex] {
+      cursor: pointer;
+    }
+
+    .boat-item.locked,
+    .license-item.owned,
+    .upgrade-buy-btn.disabled,
+    button:disabled,
+    [disabled] {
+      cursor: not-allowed;
+    }
