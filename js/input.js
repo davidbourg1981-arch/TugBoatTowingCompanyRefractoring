@@ -50,9 +50,9 @@ function handleKeyUp(e) {
     // For keyboard, we usually check valid inputs in the loop.
 
     // Checking keybinds for actions that are "trigger" based (like attach)
-    // Usually handled in computeControls or a specific check function.
+    // NOTE: toggleAttachment is handled in main.js keydown listener - not here to avoid double-trigger
 
-    if (isKeyBound('attach')(e.code)) toggleAttachment();
+    // if (isKeyBound('attach')(e.code)) toggleAttachment(); // REMOVED - duplicate with main.js
     if (isKeyBound('horn')(e.code)) playSound('horn');
     if (isKeyBound('refuel')(e.code)) refuel();
     if (isKeyBound('repair')(e.code)) repair();
