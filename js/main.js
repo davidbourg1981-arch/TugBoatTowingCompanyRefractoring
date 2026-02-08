@@ -82,10 +82,13 @@ function startGame() {
 
 // Toggle cargo attachment/detachment
 function toggleAttachment() {
+  console.log('toggleAttachment called', { gameStarted, attached: !!tugboat.attached, currentJob: !!currentJob });
+
   if (!gameStarted) return;
 
   // If already attached, release cargo
   if (tugboat.attached) {
+    console.log('Releasing cargo');
     if (typeof addRipple === 'function') addRipple(tugboat.attached.x, tugboat.attached.y, 30);
     if (typeof playSound === 'function') playSound('splash');
     tugboat.attached = null;
@@ -93,19 +96,32 @@ function toggleAttachment() {
   }
 
   // Try to attach to current job cargo
-  if (!currentJob || currentJob.pickedUp) return;
+  if (!currentJob) {
+    console.log('No current job');
+    return;
+  }
+  if (currentJob.pickedUp) {
+    console.log('Job already picked up');
+    return;
+  }
 
   // Get all cargo for this job
-  const cargos = currentJob.allCargo || [currentJob.cargo];
-  if (!cargos || cargos.length === 0) return;
+  const jobCargos = currentJob.allCargo || [currentJob.cargo];
+  console.log('Job cargos:', jobCargos);
+  if (!jobCargos || jobCargos.length === 0 || !jobCargos[0]) {
+    console.log('No valid cargo found');
+    return;
+  }
 
   // Check if close enough to first cargo (or any cargo for tandem)
-  const mainCargo = cargos[0];
+  const mainCargo = jobCargos[0];
   const dist = Math.hypot(tugboat.x - mainCargo.x, tugboat.y - mainCargo.y);
   const attachRange = 80;
+  console.log('Distance to cargo:', dist, 'Range:', attachRange);
 
   if (dist < attachRange) {
     // Attach!
+    console.log('ATTACHING cargo!', mainCargo);
     tugboat.attached = mainCargo;
     currentJob.pickedUp = true;
     if (typeof addRipple === 'function') addRipple(tugboat.x, tugboat.y, 30);
@@ -113,6 +129,8 @@ function toggleAttachment() {
     if (typeof showEvent === 'function') {
       showEvent('success', currentJob.jobType.icon + ' Cargo Attached!', 'Delivering to ' + (currentJob.delivery?.name || 'destination'));
     }
+  } else {
+    console.log('Too far from cargo');
   }
 }
 
