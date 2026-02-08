@@ -23,6 +23,9 @@ const options = {
     quality: 'High'
 };
 
+// Debug mode
+let debugMode = false;
+
 // Visual state
 let zoom = {
     level: 0.7,
