@@ -146,7 +146,7 @@ function initGame(isLoaded = false) {
 window.addEventListener('keydown', (e) => {
     keys[e.key] = true;
     keys[e.code] = true;
-    if (e.key === 'Escape') handleEscapeAction();
+    // NOTE: Escape is handled in main.js keydown listener - not here to avoid double-trigger
 });
 window.addEventListener('keyup', (e) => {
     keys[e.key] = false;
