@@ -292,6 +292,7 @@ function updateBoatShopUI() {
 }
 
 function buyBoat(index) {
+    console.log('buyBoat called with index:', index);
     const boat = BOATS[index];
     if (game.money >= boat.price) {
         game.money -= boat.price;
@@ -306,6 +307,7 @@ function buyBoat(index) {
 }
 
 function selectBoat(index) {
+    console.log('selectBoat called with index:', index, 'owned:', tugboat.ownedBoats[index]);
     if (!tugboat.ownedBoats[index]) return;
     tugboat.currentBoat = index;
     const boat = BOATS[index];
