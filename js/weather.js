@@ -4,6 +4,7 @@
    ========================================== */
 
 function changeWeather() {
+    console.log('changeWeather called, WEATHER_TYPES:', typeof WEATHER_TYPES, WEATHER_TYPES);
     const weatherSystemTypes = Object.values(WEATHER_TYPES);
     const region = getCurrentRegion(); // Depends on world.js
 
