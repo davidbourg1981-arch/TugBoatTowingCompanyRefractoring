@@ -31,6 +31,7 @@ function changeWeather() {
     }
 
     weatherSystem.current = newWeather;
+    console.log('Weather changed to:', newWeather.name, 'visibility:', newWeather.visibility, 'windStrength:', newWeather.windStrength);
     weatherSystem.windAngle = Math.random() * Math.PI * 2;
     weatherSystem.windTarget = weatherSystem.windAngle;
 
