@@ -272,8 +272,8 @@ function updateOptionsUI() {
   document.getElementById('wavesToggle').classList.toggle('active', options.waves);
   document.getElementById('particlesToggle').textContent = options.particles ? 'ON' : 'OFF';
   document.getElementById('particlesToggle').classList.toggle('active', options.particles);
-  document.getElementById('weatherSystemFxToggle').textContent = options.weatherSystemFx ? 'ON' : 'OFF';
-  document.getElementById('weatherSystemFxToggle').classList.toggle('active', options.weatherSystemFx);
+  document.getElementById('weatherFxToggle').textContent = options.weatherSystemFx ? 'ON' : 'OFF';
+  document.getElementById('weatherFxToggle').classList.toggle('active', options.weatherSystemFx);
 }
 
 // Keybinding system
