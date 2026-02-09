@@ -28,35 +28,18 @@ function handleKeyDown(e) {
 
     keys[e.code] = true;
 
-    // Global toggles
+    // Global toggles - simple state changes only (no duplicates with main.js)
     if (e.code === 'KeyM') toggleMinimapOption();
     if (e.code === 'KeyP') game.paused = !game.paused;
-    // F3 Debug moved to main loop or kept here?
-    if (e.code === 'F3') {
-        e.preventDefault();
-        debugMode = !debugMode;
-        document.getElementById('debugHud').style.display = debugMode ? 'block' : 'none';
-    }
+    // NOTE: F3 debug and F4 safe mode are handled in ui.js
 }
 
 function handleKeyUp(e) {
     keys[e.code] = false;
 
-    if (!gameStarted) return;
-
-    // Actions on release or press? Usually press, but let's see.
-    // The original code likely checked 'keys' array in the loop.
-    // But we have 'justPressed' logic for Gamepad. 
-    // For keyboard, we usually check valid inputs in the loop.
-
-    // Checking keybinds for actions that are "trigger" based (like attach)
-    // NOTE: toggleAttachment is handled in main.js keydown listener - not here to avoid double-trigger
-
-    // if (isKeyBound('attach')(e.code)) toggleAttachment(); // REMOVED - duplicate with main.js
-    if (isKeyBound('horn')(e.code)) playSound('horn');
-    if (isKeyBound('refuel')(e.code)) refuel();
-    if (isKeyBound('repair')(e.code)) repair();
-    if (isKeyBound('leaderboard')(e.code)) toggleLeaderboard();
+    // NOTE: All key actions (horn, refuel, repair, leaderboard, attach, escape) are now handled 
+    // in main.js keydown listener ONLY to prevent double-trigger issues.
+    // Do NOT add action triggers here - only track key state.
 }
 
 
