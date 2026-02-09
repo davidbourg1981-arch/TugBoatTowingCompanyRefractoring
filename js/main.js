@@ -541,6 +541,7 @@ const UI_NAV = {
 
 
 function _handleEscapeAction() {
+  console.log('_handleEscapeAction called, gameStarted:', gameStarted);
   if (document.getElementById('remapPanel').classList.contains('show')) {
     closeRemapPanel();
   } else if (document.getElementById('profilePanel').classList.contains('show')) {
@@ -560,7 +561,10 @@ function _handleEscapeAction() {
   } else if (document.getElementById('careerPanel').classList.contains('show')) {
     closeCareer();
   } else if (typeof gameStarted !== 'undefined' && gameStarted) {
+    console.log('Calling showOptions()');
     showOptions();
+  } else {
+    console.log('Escape did nothing - no panel open and game not started');
   }
 }
 window.handleEscapeAction = _handleEscapeAction;
