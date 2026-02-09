@@ -19,6 +19,7 @@ const options = {
     waves: true,
     particles: true,
     weatherFx: true,
+    weatherSystemFx: true, // Used by weather.js for visual effects
     minimap: true,
     quality: 'High'
 };
