@@ -11,7 +11,7 @@ function changeWeather() {
     // Weight weatherSystem by region - later regions have worse weatherSystem
     let weights;
     if (career.currentRegion === 0) {
-        weights = [0.6, 0.2, 0.15, 0.05, 0]; // Starter: mostly clear
+        weights = [0.3, 0.25, 0.2, 0.2, 0.05]; // Starter: more variety (was mostly clear)
     } else if (career.currentRegion <= 2) {
         weights = [0.35, 0.25, 0.2, 0.15, 0.05]; // Mid: mixed
     } else {
